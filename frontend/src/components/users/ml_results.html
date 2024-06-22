@@ -1,0 +1,79 @@
+{%extends 'users/user_base.html'%}
+{%load static%}
+{%block contents%}
+<style>
+   section{
+        background-color: radial-gradient(#e1efff, white);
+}
+table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table td, table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  color: black;
+}
+
+table tr{
+background-color: #f2f2f2;
+}
+
+/*table tr:hover {background-color: #ddd;}*/
+
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #2c3e50; /* Dark Slate Blue */
+  color: #ecf0f1; /* Light Gray */
+}
+
+
+</style>
+<section id="hero_section" class="top_cont_outer">
+    <div class="hero_wrapper">
+        <div class="container">
+            <div class="hero_section">
+                <div class="row">
+                    <h2>Machine Learning Results</h2>
+                    <table border="1" class="dataframe">
+                        <thead>
+                        <tr style="text-align: right;">
+
+                            <th>Metrics</th>
+                            <th>Metrics</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+
+                            <!--<td><h3>K Neighbors Classifier</h3> {{gb|safe}}</td>
+                            <td><h3>Naive Bayes </h3> {{nb|safe}}</td>-->
+                            
+                            </tr>
+                            <tr>
+                                
+                                <td><h3>Decision Tree</h3> {{dt|safe}}</td>
+                                <td><h3>Random Forest</h3> {{rf|safe}}</td>
+
+                        </tr>
+                         <tr>
+
+                            <td><h3>Logistic Regression </h3> {{lg|safe}}</td>
+                            <td><h3>Support Vector Machine</h3> {{svm|safe}}</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{%endblock%}

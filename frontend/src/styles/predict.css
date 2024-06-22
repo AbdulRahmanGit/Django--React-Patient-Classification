@@ -1,0 +1,75 @@
+/* Style for the container */
+.nice-form-group {
+  margin-bottom: 20px;
+}
+
+/* Label style */
+.nice-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333; /* Example color */
+}
+
+/* Range slider style */
+.nice-form-group input[type=range] {
+  width: 100%; /* Full width of the container */
+  height: 10px; /* Adjust height as needed */
+  -webkit-appearance: none; /* Remove default styling for WebKit browsers */
+  appearance: none; /* Remove default styling */
+  background: #ddd; /* Background color of the slider track */
+  border-radius: 5px; /* Rounded corners */
+  outline: none; /* Remove default focus outline */
+  margin: 5px 0; /* Adjust margin as needed */
+}
+
+/* Slider thumb style */
+.nice-form-group input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Remove default styling for WebKit browsers */
+  appearance: none; /* Remove default styling */
+  width: 20px; /* Width of the slider thumb */
+  height: 20px; /* Height of the slider thumb */
+  background: #007bff; /* Color of the slider thumb */
+  border-radius: 50%; /* Rounded shape */
+  cursor: pointer; /* Cursor style */
+}
+
+/* Firefox slider thumb style */
+.nice-form-group input[type=range]::-moz-range-thumb {
+  width: 20px; /* Width of the slider thumb */
+  height: 20px; /* Height of the slider thumb */
+  background: #007bff; /* Color of the slider thumb */
+  border-radius: 50%; /* Rounded shape */
+  cursor: pointer; /* Cursor style */
+}
+
+/* Track style for Firefox */
+.nice-form-group input[type=range]::-moz-range-track {
+  background: #ddd; /* Background color of the slider track */
+  border-radius: 5px; /* Rounded corners */
+  height: 10px; /* Height of the track */
+}
+
+/* Active state for the slider thumb */
+.nice-form-group input[type=range]:active::-webkit-slider-thumb {
+  background: #0056b3; /* Example color when active */
+}
+
+/* Focus state for the slider thumb */
+.nice-form-group input[type=range]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Example focus style */
+}
+
+/* Adjust track color for different states */
+.nice-form-group input[type=range]::-moz-range-track {
+  background: #ddd; /* Example background color */
+}
+.nice-form-group input {
+  font-size: 16px;
+  line-height: 28px;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 9px;
+  outline-color: rgb(84 105 212 / 0.5);
+  background-color: rgb(255, 255, 255);
+}
