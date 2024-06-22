@@ -5,6 +5,7 @@ contourpy
 cycler
 Django
 djangorestframework
+rest_framework_simplejwt
 django-cors-headers
 fonttools
 gunicorn
