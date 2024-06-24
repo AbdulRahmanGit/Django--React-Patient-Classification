@@ -31,4 +31,5 @@ sqlparse
 threadpoolctl
 tzdata
 urllib3
+whitenoise
 wheel
