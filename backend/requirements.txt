@@ -3,7 +3,7 @@ certifi
 charset-normalizer
 contourpy
 cycler
-Django
+django
 djangorestframework
 rest_framework_simplejwt
 django-cors-headers
