@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-nma=xi6x2p-crjg^ifqqkapyu1qjd0l=+wn)-rijk_o%$!k3w_"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "api",
     "rest_framework",
     "corsheaders",
-    "api",
 ]
 
 MIDDLEWARE = [
@@ -141,12 +141,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 # CORS Settings
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # Allow your React frontend
-    'http://127.0.0.1:8000',   # Allow Django backend itself
-    'https://0225f1de-4e0c-4556-b535-2e531d9a9ab2.e1-us-east-azure.choreoapps.dev',    # Example for a deployed frontend (replace with your actual frontend URL)
-    # Add more origins as needed
-]
+
 
 CORS_ALLOW_ALL_ORIGINS = True  # This is a temporary measure; ideally, specify origins explicitly
 
