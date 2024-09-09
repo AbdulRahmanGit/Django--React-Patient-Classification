@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
-const apiUrl1 = "/choreo-apis/djangoreact-patient-class/backend-eqj/v1/";
+const apiUrl1 = "https://django-react-patient-classification.onrender.com/";
 const apiUrl = "http://127.0.0.1:8000/";
 
 const api = axios.create({
