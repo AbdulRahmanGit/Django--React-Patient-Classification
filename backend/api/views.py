@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.conf import settings
-from rest_framework import generics, response
+from rest_framework import generics, response, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view
 import pandas as pd
 import os
 from django.views.decorators.csrf import csrf_exempt
@@ -21,6 +22,10 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
+    def get(self, request, *args, **kwargs):
+        return response.Response({"message": "Use POST method to create a new user"}, status=status.HTTP_200_OK)
+
+@api_view(['GET', 'POST'])
 def UserLoginCheck(request):
     if request.method == "POST":
         loginid = request.POST.get('loginname')
@@ -44,14 +49,17 @@ def UserLoginCheck(request):
         except User.DoesNotExist:
             messages.success(request, 'Invalid login id and password')
             logger.warning(f"Login attempt failed for non-existent user: {loginid}")
-    return render(request, 'UserLogin.html', {})
+    elif request.method == "GET":
+        return render(request, 'UserLogin.html', {})
 
+@api_view(['GET'])
 def usersViewDataset(request):
     dataset = os.path.join(settings.MEDIA_ROOT, 'EmergencyDataset.csv')
     df = pd.read_csv(dataset)
     data = df.to_dict(orient='records')
     return JsonResponse(data, safe=False)
 
+@api_view(['GET'])
 def userClassificationResults(request):
     try:
         rf_report = EmergencyClassi.process_randomForest()
@@ -75,6 +83,7 @@ def userClassificationResults(request):
         logger.error(f"Error generating classification results: {str(e)}")
         return JsonResponse({'error': 'Error generating classification results'}, status=500)
 
+@api_view(['GET', 'POST'])
 @csrf_exempt
 def UserPredictions(request):
     if request.method == 'POST':
@@ -130,5 +139,16 @@ def UserPredictions(request):
             logger.error(f"Error: {str(e)}")
             return JsonResponse({'error': str(e)}, status=500)
     
-    else:
-        return JsonResponse({'error': 'GET method not supported'}, status=405)
+    elif request.method == 'GET':
+        return JsonResponse({'message': 'Use POST method to make predictions'}, status=200)
+
+# Add a root API view
+@api_view(['GET'])
+def api_root(request):
+    return JsonResponse({
+        'user_register': request.build_absolute_uri('/api/user/register/'),
+        'user_login': request.build_absolute_uri('/api/user/login/'),
+        'view_dataset': request.build_absolute_uri('/api/dataset/'),
+        'classification_results': request.build_absolute_uri('/api/classification/'),
+        'predictions': request.build_absolute_uri('/api/predictions/'),
+    })
