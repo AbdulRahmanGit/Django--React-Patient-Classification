@@ -31,7 +31,26 @@ function Form({ route, method }) {
         navigate("/");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      console.error("Error during form submission:", err);
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (err.response.status === 400) {
+          setError("Invalid input. Please check your details and try again.");
+        } else if (err.response.status === 401) {
+          setError("Authentication failed. Please check your credentials.");
+        } else if (err.response.status === 409) {
+          setError("Username or email already exists. Please try a different one.");
+        } else {
+          setError("An error occurred on the server. Please try again later.");
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError("No response from server. Please check your internet connection.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
