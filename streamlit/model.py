@@ -1,5 +1,5 @@
 import pandas as pd
-# import os  # Unused import, can be removed
+import os  # Unused import, can be removed
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import pickle
@@ -10,7 +10,7 @@ import streamlit as st
 logging.basicConfig(level=logging.INFO)
 
 # Load dataset
-path = "EmergencyDataset.csv"  # Update this path if necessary
+path = os.path.join('streamlit', 'EmergencyDataset.csv')
 df = pd.read_csv(path)
 X = df.iloc[:, :-1].values  # Keep as DataFrame for feature names
 y = df.iloc[:, -1].values
