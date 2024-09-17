@@ -1,5 +1,5 @@
 import pandas as pd
-import os
+# import os  # Unused import, can be removed
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import pickle
@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 # Load dataset
 path = "EmergencyDataset.csv"  # Update this path if necessary
 df = pd.read_csv(path)
-X = df.iloc[:, :-1].values
+X = df.iloc[:, :-1].values  # Keep as DataFrame for feature names
 y = df.iloc[:, -1].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=109)
 
@@ -91,9 +91,12 @@ def process_SVM():
 def save_all_models(models):
     """Save all models to a single pickle file."""
     model_file = 'all_models.pkl'  # Save in the main root directory
-    with open(model_file, 'wb') as f:
-        pickle.dump(models, f)
-    logging.info(f"All models saved to {model_file}")
+    try:  # Added error handling
+        with open(model_file, 'wb') as f:
+            pickle.dump(models, f)
+        logging.info(f"All models saved to {model_file}")
+    except Exception as e:
+        logging.error(f"Error saving models: {e}")
 
 def train_and_save_models():
     """Train all models and save them to a single file."""

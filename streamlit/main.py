@@ -94,45 +94,67 @@ elif selection == "Classification Results":
 elif selection == "Predict":
     st.title("Predict Patient Classification")
     # Input fields for prediction with default values
-    age = st.number_input("Age", min_value=0, max_value=120, step=1, format="%d", value=30)  # Default age is 30
+    age = st.number_input("Age", min_value=1, max_value=120, step=1, format="%d", value=30)  # Default age is 30
     gender = st.selectbox("Gender", ["Male", "Female"], index=0)  # Default gender is Male
     pulse = st.number_input("Pulse", min_value=30, max_value=200, step=1, format="%d", value=70)  # Default pulse is 70 bpm
-    systolic_bp = st.number_input("Systolic Blood Pressure", min_value=80, max_value=300, step=1, format="%d", value=120)  # Default systolic BP is 120 mmHg
+    systolic_bp = st.number_input("Systolic Blood Pressure", min_value=70, max_value=300, step=1, format="%d", value=120)  # Default systolic BP is 120 mmHg
     diastolic_bp = st.number_input("Diastolic Blood Pressure", min_value=40, max_value=200, step=1, format="%d", value=80)  # Default diastolic BP is 80 mmHg
-    respiratory_rate = st.number_input("Respiratory Rate", min_value=0, max_value=100, step=1, format="%d", value=16)  # Default respiratory rate is 16 breaths/min
-    spo2 = st.number_input("SPO2", min_value=0, max_value=100, step=1, format="%d", value=98)  # Default SPO2 is 98%
+    respiratory_rate = st.number_input("Respiratory Rate", min_value=1, max_value=100, step=1, format="%d", value=16)  # Default respiratory rate is 16 breaths/min
+    spo2 = st.number_input("SPO2", min_value=80, max_value=100, step=1, format="%d", value=98)  # Default SPO2 is 98%
     random_blood_sugar = st.number_input("Random Blood Sugar", min_value=0, max_value=400, step=1, format="%d", value=100)  # Default random blood sugar is 100 mg/dL
     temperature = st.number_input("Temperature (°F)", min_value=95, max_value=104, step=1, format="%d", value=98)  # Default temperature is 98°F
 
-    # Prepare the input data for prediction
-    input_data = pd.DataFrame({
-        'Age': [age],
-        'Gender': [1 if gender == 'Male' else 0],  # Assuming binary encoding for gender
-        'Pulse': [pulse],
-        'Systolic Blood Pressure': [systolic_bp],
-        'Diastolic Blood Pressure': [diastolic_bp],
-        'Respiratory Rate': [respiratory_rate],
-        'SPO2': [spo2],
-        'Random Blood Sugar': [random_blood_sugar],
-        'Temperature': [temperature]
-    })
-
+    # Validate inputs
     if st.button("Submit"):
-        # Load the models from the pickle file
-        with open('all_models.pkl', 'rb') as f:
-            models = pickle.load(f)
-        # Select the best model based on evaluation metrics (e.g., accuracy or TP values)
-        best_model_name = max(models, key=lambda name: models[name][1]['accuracy'])  # Get the name of the best model
-        best_model_info = models[best_model_name]  # Get the tuple (model, report)
-        best_model = best_model_info[0]  # Access the model from the tuple
+        if age < 1 or age > 120:
+            st.error("Age must be between 1 and 120.")
+        elif pulse < 30 or pulse > 200:
+            st.error("Pulse must be between 30 and 200 bpm.")
+        elif systolic_bp < 70 or systolic_bp > 300:
+            st.error("Systolic Blood Pressure must be between 70 and 300 mmHg.")
+        elif diastolic_bp < 40 or diastolic_bp > 200:
+            st.error("Diastolic Blood Pressure must be between 40 and 200 mmHg.")
+        elif respiratory_rate < 1 or respiratory_rate > 100:
+            st.error("Respiratory Rate must be between 1 and 100 breaths/min.")
+        elif spo2 < 80 or spo2 > 100:
+            st.error("SPO2 must be between 80% and 100%.")
+        elif random_blood_sugar < 0 or random_blood_sugar > 400:
+            st.error("Random Blood Sugar must be between 0 and 400 mg/dL.")
+        elif temperature < 95 or temperature > 104:
+            st.error("Temperature must be between 95°F and 104°F.")
+        else:
+            # Prepare the input data for prediction with correct feature names
+            input_data = pd.DataFrame({
+                'Age': [age],
+                'Gender': [1 if gender == 'Male' else 0],  # Assuming binary encoding for gender
+                'Pulse': [pulse],
+                'SystolicBloodPressure': [systolic_bp],  # Corrected feature name
+                'DiastolicBloodPressure': [diastolic_bp],  # Corrected feature name
+                'RespiratoryRate': [respiratory_rate],  # Corrected feature name
+                'SPO2': [spo2],
+                'RandomBloodSugar': [random_blood_sugar],  # Corrected feature name
+                'Temperature': [temperature]
+            })
 
-        # Now you can make predictions
-        prediction = best_model.predict(input_data)[0] 
-        if prediction == 0:
-            st.write(f"The Emergency Level is: Not Critical")
+            # Load the models from the pickle file
+            try:
+                with open('all_models.pkl', 'rb') as f:
+                    models = pickle.load(f)
+            except FileNotFoundError:
+                st.error("Model file not found. Please ensure 'all_models.pkl' is in the correct directory.")
+                st.stop()  # Use st.stop() to halt execution in Streamlit
 
-        elif prediction == 1:
-            st.write(f"The Emergency Level is: Critical")
+            # Select the best model based on evaluation metrics (e.g., accuracy or TP values)
+            best_model_name = max(models, key=lambda name: models[name][1]['accuracy'])  # Get the name of the best model
+            best_model_info = models[best_model_name]  # Get the tuple (model, report)
+            best_model = best_model_info[0]  # Access the model from the tuple
+
+            # Now you can make predictions
+            prediction = best_model.predict(input_data)[0]
+            if prediction == 0:
+                st.write(f"The Emergency Level is: Not Critical")
+            elif prediction == 1:
+                st.write(f"The Emergency Level is: Critical")
 
 # ... existing code for other pages ...
 elif selection == "Home":
@@ -143,7 +165,7 @@ elif selection == "Home":
     st.header("MACHINE LEARNING BASED PATIENT CLASSIFICATION IN EMERGENCY DEPARTMENT")
     st.write(
         "This work contains the classification of patients in an Emergency Department in a hospital according to their critical conditions. "
-        "Machine learning can be applied based on the patient’s condition to quickly determine if the patient requires urgent medical intervention from the clinicians."
+        "Machine learning can be applied based on the patient's condition to quickly determine if the patient requires urgent medical intervention from the clinicians."
     )
 
     # Objective Evaluation section
