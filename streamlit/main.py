@@ -10,9 +10,9 @@ from model import (
     process_SVM
 )
 import random
-
+import os
 # Specify the path to your CSV file
-csv_file_path = 'EmergencyDataset.csv'  # Update this path
+csv_file_path = os.path.join('streamlit', 'EmergencyDataset.csv')
 
 # Load the dataset
 try:
