@@ -7,4 +7,4 @@ COPY . /home/pptruser/src/streamlit
 WORKDIR /home/pptruser/src/streamlit/probe-action
 
 # Set the entry point to execute the probe.js script with Node.js
-ENTRYPOINT [ "/bin/bash", "-c", "node -e \"$(</home/pptruser/src/streamlit/probe-action/probe.js)\"" ]
+ENTRYPOINT [ "/bin/bash", "-c", "node -e \"$(</home/pptruser/src/probe.js)\"" ]
