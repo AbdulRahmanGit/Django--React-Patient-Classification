@@ -12,7 +12,7 @@ from model import (
 import random
 import os
 # Specify the path to your CSV file
-csv_file_path = os.path.join('streamlit', 'EmergencyDataset.csv')
+csv_file_path = os.path.join('EmergencyDataset.csv')
 
 # Load the dataset
 try:
