@@ -22,14 +22,23 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        logger.error(f"User creation failed: {serializer.errors}")
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def get(self, request, *args, **kwargs):
         return response.Response({"message": "Use POST method to create a new user"}, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 def UserLoginCheck(request):
     if request.method == "POST":
-        loginid = request.POST.get('loginname')
-        pswd = request.POST.get('pswd')
+        loginid = request.data.get('loginname')
+        pswd = request.data.get('pswd')
         logger.info(f"Login attempt with ID: {loginid}")
         try:
             check = User.objects.get(username=loginid)
@@ -40,17 +49,18 @@ def UserLoginCheck(request):
                     request.session['loginid'] = loginid
                     request.session['email'] = check.email
                     logger.info(f"User {loginid} logged in successfully.")
-                    return render(request, 'users/UserHome.html', {})
+                    return JsonResponse({"message": "Login successful", "user": check.username})
                 else:
-                    messages.success(request, 'Your account is not activated')
-                    return render(request, 'UserLogin.html')
+                    logger.warning(f"Login attempt for inactive account: {loginid}")
+                    return JsonResponse({"error": "Your account is not activated"}, status=403)
             else:
-                messages.success(request, 'Invalid login id and password')
+                logger.warning(f"Invalid password for user: {loginid}")
+                return JsonResponse({"error": "Invalid login id or password"}, status=401)
         except User.DoesNotExist:
-            messages.success(request, 'Invalid login id and password')
             logger.warning(f"Login attempt failed for non-existent user: {loginid}")
+            return JsonResponse({"error": "Invalid login id or password"}, status=401)
     elif request.method == "GET":
-        return render(request, 'UserLogin.html', {})
+        return JsonResponse({"message": "Please use POST method for login"})
 
 @api_view(['GET'])
 def usersViewDataset(request):
@@ -91,7 +101,6 @@ def UserPredictions(request):
             data = json.loads(request.body)
             logger.info(f"Received prediction request data: {data}")
 
-            # Validate and convert parameters
             required_params = [
                 'age', 'gender', 'pulse', 'systolicBloodPressure', 'diastolicBloodPressure',
                 'respiratoryRate', 'spo2', 'randomBloodSugar', 'temperature'
@@ -100,20 +109,11 @@ def UserPredictions(request):
                 if param not in data:
                     return JsonResponse({'error': f"Missing parameter: {param}"}, status=400)
 
-            # Convert to appropriate types
-            age = int(data['age'])
-            gender = int(data['gender'])
-            pulse = int(data['pulse'])
-            systolicBloodPressure = int(data['systolicBloodPressure'])
-            diastolicBloodPressure = int(data['diastolicBloodPressure'])
-            respiratoryRate = int(data['respiratoryRate'])
-            spo2 = float(data['spo2'])
-            randomBloodSugar = int(data['randomBloodSugar'])
-            temperature = float(data['temperature'])
-
             test_data = [
-                age, gender, pulse, systolicBloodPressure, diastolicBloodPressure,
-                respiratoryRate, spo2, randomBloodSugar, temperature
+                int(data['age']), int(data['gender']), int(data['pulse']),
+                int(data['systolicBloodPressure']), int(data['diastolicBloodPressure']),
+                int(data['respiratoryRate']), float(data['spo2']),
+                int(data['randomBloodSugar']), float(data['temperature'])
             ]
 
             logger.info(f"Test data: {test_data}")
@@ -142,7 +142,6 @@ def UserPredictions(request):
     elif request.method == 'GET':
         return JsonResponse({'message': 'Use POST method to make predictions'}, status=200)
 
-# Add a root API view
 @api_view(['GET'])
 def api_root(request):
     return JsonResponse({

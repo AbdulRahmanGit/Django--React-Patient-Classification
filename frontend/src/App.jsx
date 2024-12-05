@@ -1,5 +1,6 @@
 // src/App.jsx
 import React from "react";
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -8,7 +9,9 @@ import MLResults from "./pages/MLResults"; // Import MLResults component
 import ProtectedRoute from "./components/ProtectedRoute";
 import Predict from "./pages/Predict";
 import Dataset from "./pages/Dataset";
-
+import { inject } from '@vercel/analytics';
+ 
+inject();
 
 function Logout() {
   localStorage.clear();
